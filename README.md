@@ -1,0 +1,1 @@
+# share-remote-entries-plugin
