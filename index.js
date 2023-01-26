@@ -1,10 +1,23 @@
 const extractUrlAndGlobal = require('webpack/lib/util/extractUrlAndGlobal');
+const fetch = require('node-fetch');
 
 const MFPluginsConstructorNames = [
   'NodeFederationPlugin',
   'ModuleFederationPlugin',
   'UniversalFederationPlugin'
 ];
+
+const EXTENSION_BASE_URL = 'http://localhost:3000';
+
+async function publishEntries(externalModules) {
+  await fetch(`${EXTENSION_BASE_URL}/entries`, {
+    method: 'post',
+    headers: {
+      'Content-type': 'application/json'
+    },
+    body: JSON.stringify(entries)
+  });
+}
 
 class ShareRemoteEntriesPlugin {
   apply(compiler) {
@@ -23,12 +36,8 @@ class ShareRemoteEntriesPlugin {
       .map(([_, urlWithGlobal]) => extractUrlAndGlobal(urlWithGlobal))
       .reduce((acc, [url, global]) => ({ ...acc, [global]: url }), {});
 
-    publish('remotes', entries)
+    publishEntries(entries);
   }
-}
-
-function publish(externalModules) {
-  console.log(externalModules);
 }
 
 module.exports = ShareRemoteEntriesPlugin;
