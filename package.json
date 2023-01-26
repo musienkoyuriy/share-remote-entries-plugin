@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "Yuriy Musienko",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "2.6.8",
+    "schema-utils": "^4.0.0"
+  }
 }

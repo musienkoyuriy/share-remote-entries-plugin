@@ -1,5 +1,6 @@
 const extractUrlAndGlobal = require('webpack/lib/util/extractUrlAndGlobal');
 const fetch = require('node-fetch');
+const { validate } = require('schema-utils');
 
 const MFPluginsConstructorNames = [
   'NodeFederationPlugin',
@@ -7,10 +8,19 @@ const MFPluginsConstructorNames = [
   'UniversalFederationPlugin'
 ];
 
+const schema = {
+  type: 'object',
+  properties: {
+    host: {
+      type: 'string'
+    }
+  }
+}
+
 const EXTENSION_BASE_URL = 'http://localhost:3000';
 
-async function publishEntries(externalModules) {
-  await fetch(`${EXTENSION_BASE_URL}/entries`, {
+async function publishEntries(options, entries) {
+  await fetch(`${options.host}/entries`, {
     method: 'post',
     headers: {
       'Content-type': 'application/json'
@@ -20,6 +30,15 @@ async function publishEntries(externalModules) {
 }
 
 class ShareRemoteEntriesPlugin {
+  defaultOptions = {
+    host: `${EXTENSION_BASE_URL}`
+  };
+
+  constructor(options = {}) {
+    validate(schema, options);
+    this.options = { ...this.defaultOptions, ...options };
+  }
+
   apply(compiler) {
     const federationPlugin =
       (compiler.options.plugins || []).find(
@@ -36,7 +55,7 @@ class ShareRemoteEntriesPlugin {
       .map(([_, urlWithGlobal]) => extractUrlAndGlobal(urlWithGlobal))
       .reduce((acc, [url, global]) => ({ ...acc, [global]: url }), {});
 
-    publishEntries(entries);
+    publishEntries(this.options, entries);
   }
 }
 
