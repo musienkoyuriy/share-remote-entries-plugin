@@ -5,7 +5,8 @@ const { validate } = require('schema-utils');
 const MFPluginsConstructorNames = [
   'NodeFederationPlugin',
   'ModuleFederationPlugin',
-  'UniversalFederationPlugin'
+  'UniversalFederationPlugin',
+  'NextFederationPlugin'
 ];
 
 const schema = {
@@ -15,7 +16,7 @@ const schema = {
       type: 'string'
     }
   }
-}
+};
 
 const EXTENSION_BASE_URL = 'http://localhost:3000';
 
