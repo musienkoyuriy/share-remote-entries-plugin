@@ -18,8 +18,6 @@ const schema = {
   }
 };
 
-const EXTENSION_BASE_URL = 'http://localhost:3000';
-
 async function publishEntries(options, entries) {
   await fetch(`${options.host}/entries`, {
     method: 'post',
@@ -31,13 +29,8 @@ async function publishEntries(options, entries) {
 }
 
 class ShareRemoteEntriesPlugin {
-  defaultOptions = {
-    host: `${EXTENSION_BASE_URL}`
-  };
-
   constructor(options = {}) {
     validate(schema, options);
-    this.options = { ...this.defaultOptions, ...options };
   }
 
   apply(compiler) {
