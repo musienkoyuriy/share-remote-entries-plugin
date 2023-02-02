@@ -30,6 +30,7 @@ async function publishEntries(options, entries) {
 
 class ShareRemoteEntriesPlugin {
   constructor(options = {}) {
+    this.options = options;
     validate(schema, options);
   }
 
