@@ -28,6 +28,13 @@ async function publishEntries(options, entries) {
   });
 }
 
+function normalizeRemoteEntry(remoteEntry) {
+  const [key, value] = remoteEntry;
+  return value.startsWith('promise ')
+    ? ['promise', key]
+    : extractUrlAndGlobal(value);
+}
+
 class ShareRemoteEntriesPlugin {
   constructor(options = {}) {
     this.options = options;
@@ -47,7 +54,7 @@ class ShareRemoteEntriesPlugin {
 
     const remotes = federationPlugin._options.remotes;
     const entries = Object.entries(remotes)
-      .map(([_, urlWithGlobal]) => extractUrlAndGlobal(urlWithGlobal))
+      .map(remoteEntry => normalizeRemoteEntry(remoteEntry))
       .reduce((acc, [url, global]) => ({ ...acc, [global]: url }), {});
 
     publishEntries(this.options, entries);
